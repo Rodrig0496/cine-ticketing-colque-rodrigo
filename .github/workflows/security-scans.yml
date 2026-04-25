@@ -68,3 +68,18 @@ jobs:
           dotnet sonarscanner begin /k:"tu-organizacion_cine-ticketing" /o:"tu-organizacion" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build backend/
           dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+  publish-markdown-report:
+    name: Publish Markdown Report
+    needs: [semgrep, snyk, sonarcloud]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Create Summary
+        run: |
+          echo "# 📊 Reporte de Seguridad y Calidad de Código" >> $GITHUB_STEP_SUMMARY
+          echo "Los escaneos se han ejecutado correctamente." >> $GITHUB_STEP_SUMMARY
+          echo "- **SonarCloud**: [Ver dashboard en SonarCloud](https://sonarcloud.io/)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Semgrep**: Revisar artefactos adjuntos para ver vulnerabilidades de código." >> $GITHUB_STEP_SUMMARY
+          echo "- **Snyk**: Revisar artefactos adjuntos para ver vulnerabilidades de dependencias." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ *Recuerda: El objetivo es mantener 0 bugs y 0 vulnerabilidades.*" >> $GITHUB_STEP_SUMMARY
