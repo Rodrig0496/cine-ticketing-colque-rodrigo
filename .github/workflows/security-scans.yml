@@ -65,8 +65,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         # Aquí asumimos que crearás la carpeta backend más adelante
         run: |
-          dotnet sonarscanner begin /k:"tu-organizacion_cine-ticketing" /o:"tu-organizacion" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build backend/
+          dotnet sonarscanner begin /k:"Rodrig0496_cine-ticketing-colque-rodrigo" /o:"Rodrig0496" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet build backend/CineTicketing.sln
           dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
   publish-markdown-report:
     name: Publish Markdown Report

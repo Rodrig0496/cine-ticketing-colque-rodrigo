@@ -1,4 +1,4 @@
-name: 🚀 IaC & Cloud Deploy
+name: 🚀 IaC & Cloud Deploy (Render)
 
 on:
   push:
@@ -8,11 +8,10 @@ jobs:
   terraform:
     name: 'Terraform Plan & Apply'
     runs-on: ubuntu-latest
+    # Pasamos los secretos de GitHub a Terraform
     env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_VAR_render_api_key: ${{ secrets.RENDER_API_KEY }}
+      TF_VAR_render_owner_id: ${{ secrets.RENDER_OWNER_ID }}
 
     steps:
       - name: Checkout Código
@@ -24,31 +23,6 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=terraform init
 
-      - name: Terraform Plan
-        run: terraform -chdir=terraform plan
-
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
+        # Aplica los cambios en Render automáticamente
         run: terraform -chdir=terraform apply -auto-approve
-
-  deploy-backend:
-    name: 'Build & Deploy .NET API'
-    needs: terraform
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-          
-      - name: Publish API
-        run: dotnet publish backend/CineTicketing.API/CineTicketing.API.csproj -c Release -o ./publish
-
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'api-cine-ticketing-system'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./publish
