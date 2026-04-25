@@ -24,9 +24,9 @@ provider "render" {
 resource "render_postgres" "cine_db" {
   name       = "cine-ticketing-db"
   plan       = "free"
-  region     = "ohio" # Servidor en EE.UU.
+  region     = "ohio" 
   version    = "15"
-  owner_id   = var.render_owner_id
+  # ELIMINAMOS LA LÍNEA DE OWNER_ID DE AQUÍ
 }
 
 # 2. Crear el Web Service (Tu API)
@@ -34,14 +34,12 @@ resource "render_web_service" "cine_api" {
   name     = "api-cine-ticketing"
   plan     = "free"
   region   = "ohio"
-  owner_id = var.render_owner_id
-  runtime  = "docker" # Render usará el Dockerfile que acabamos de crear
+  owner_id = var.render_owner_id # AQUÍ SÍ SE QUEDA
+  runtime  = "docker" 
 
-  # ⚠️ CAMBIA ESTO POR LA URL DE TU REPOSITORIO EN GITHUB
-  repo_url = "https://github.com/TU-USUARIO/cine-ticketing-system"
+  repo_url = "https://github.com/Rodrig0496/cine-ticketing-colque-rodrigo"
   branch   = "main"
 
-  # Le pasamos la conexión de la base de datos automáticamente al código
   env_vars = {
     "ConnectionStrings__DefaultConnection" = render_postgres.cine_db.connection_string
   }
